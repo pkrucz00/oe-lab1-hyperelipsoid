@@ -1,0 +1,3 @@
+benchmark-functions==1.1.3
+numpy==2.2.4
+packaging==24.2
