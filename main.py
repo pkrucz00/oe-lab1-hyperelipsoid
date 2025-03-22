@@ -4,7 +4,7 @@
 
 
 from backend.models.chromosome import Chromosome
-from backend.models.indyvidual import Individual
+from backend.models.individual import Individual
 
 
 # Przykładowe użycie:
