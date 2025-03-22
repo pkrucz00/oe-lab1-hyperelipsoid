@@ -1,0 +1,1 @@
+# Klasa FitnessFunction (bazowa) i jej implementacja np. HyperellipsoidFitness

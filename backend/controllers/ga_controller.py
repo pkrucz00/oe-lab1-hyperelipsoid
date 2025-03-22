@@ -1,0 +1,1 @@
+# Endpointy do uruchamiania algorytmu, pobierania wyników, statusu itp.

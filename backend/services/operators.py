@@ -1,0 +1,1 @@
+# Funkcje/operatorzy: selekcja (najlepszych, ruletki, turniejowa), krzyżowanie (jednopunktowe, dwupunktowe, jednorodne, ziarniste), mutacja i inwersja

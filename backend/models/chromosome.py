@@ -1,0 +1,1 @@
+# Klasa Chromosome – reprezentacja binarna i metody dekodowania

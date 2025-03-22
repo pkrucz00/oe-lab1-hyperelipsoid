@@ -1,0 +1,1 @@
+# Klasa Individual – osobnik składający się z chromosomów oraz przypisana wartość fitness
