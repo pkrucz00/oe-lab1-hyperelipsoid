@@ -121,11 +121,13 @@ def run_ga(config: dict) -> dict:
             elitism_count=elitism_count
         )
         best_individual = population.get_best(1)[0]
-        history.append(best_individual.fitness)
-    
+        best_x = best_individual.get_phenotype(search_range[0], search_range[1])
+        best_fitness = best_individual.fitness
+        history.append({"x": best_x, "fitness": best_fitness})
+
     elapsed_time = time.time() - start_time
     best_individual = population.get_best(1)[0]
-    
+
     result = {
         "best_fitness": best_individual.fitness,
         "best_individual": best_individual.get_phenotype(search_range[0], search_range[1]),
