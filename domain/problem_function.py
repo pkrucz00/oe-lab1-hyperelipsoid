@@ -18,3 +18,5 @@ def hyperelipsoid(x) -> float:
     return sum(x[j] ** 2 
         for i in range(N) 
         for j in range(i))
+
+#jak cos to przenioslem implementacje funckji do backend.models.fitness (mozesz przeniesc gdzies indziej)
