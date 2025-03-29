@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formularz JSON</title>
+   <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <form id="dataForm">
+        <h2>Wypełnij formularz</h2>
+        <label>Funkcja:
+            <!-- <input type="text" id="function" required> -->
+             <select id="optimization_type">
+                <option value="minimization">Hyperllipsoid</option>
+            </select>
+        </label>
+        <label>Liczba zmiennych:
+            <input type="number" id="variables" required>
+        </label>
+        <label>Rozmiar populacji:
+            <input type="number" id="population_size" required>
+        </label>
+        <label>Epoki:
+            <input type="number" id="epochs" required>
+        </label>
+        <label>Zakres wyszukiwania:
+            <input type="text" id="search_range" required>
+        </label>
+        <label>Precyzja:
+            <input type="number" id="precision" required>
+        </label>
+        <label>Typ optymalizacji:
+            <select id="optimization_type">
+                <option value="minimization">Minimization</option>
+                <option value="maximization">Maximization</option>
+            </select>
+        </label>
+        <label>Rozmiar turnieju:
+            <input type="number" id="tournament_size" required>
+        </label>
+        <label>Prawdopodobieństwo krzyżowania:
+            <input type="number" step="0.01" id="crossover_probability" required>
+        </label>
+        <label>Prawdopodobieństwo mutacji:
+            <input type="number" step="0.01" id="mutation_probability" required>
+        </label>
+        <label>Prawdopodobieństwo inwersji:
+            <input type="number" step="0.01" id="inversion_probability" required>
+        </label>
+        <label>Liczba elitarna:
+            <input type="number" id="elitism_count" required>
+        </label>
+        <label>Metoda selekcji:
+            <select id="selection_method">
+                <option value="tournament">Tournament</option>
+                <option value="roulette">Roulette</option>
+            </select>
+        </label>
+        <label>Metoda krzyżowania:
+            <select id="crossover_method">
+                <option value="one_point">One Point</option>
+                <option value="two_point">Two Point</option>
+            </select>
+        </label>
+        <label>Metoda mutacji:
+            <select id="mutation_method">
+                <option value="one_point">One Point</option>
+                <option value="bit_flip">Bit Flip</option>
+            </select>
+        </label>
+        <label>Metoda inwersji:
+            <select id="inversion_method">
+                <option value="simple">Simple</option>
+            </select>
+        </label>
+        <button class="button-85" role="button" type="submit">Wyślij</button>
+        <p class="loading" id="loading">Ładowanie wykresu...</p>
+    </form>
+    <script>
+        document.getElementById("dataForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            document.getElementById("loading").style.display = "block";
+            
+            const formData = {
+                function: document.getElementById("function").value,
+                variables: parseInt(document.getElementById("variables").value),
+                population_size: parseInt(document.getElementById("population_size").value),
+                epochs: parseInt(document.getElementById("epochs").value),
+                search_range: document.getElementById("search_range").value.split(",").map(Number),
+                precision: parseInt(document.getElementById("precision").value),
+                optimization_type: document.getElementById("optimization_type").value,
+                tournament_size: parseInt(document.getElementById("tournament_size").value),
+                crossover_probability: parseFloat(document.getElementById("crossover_probability").value),
+                mutation_probability: parseFloat(document.getElementById("mutation_probability").value),
+                inversion_probability: parseFloat(document.getElementById("inversion_probability").value),
+                elitism_count: parseInt(document.getElementById("elitism_count").value),
+                selection_method: document.getElementById("selection_method").value,
+                crossover_method: document.getElementById("crossover_method").value,
+                mutation_method: document.getElementById("mutation_method").value,
+                inversion_method: document.getElementById("inversion_method").value
+            };
+
+            fetch("/api/ga/run", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Success:", data);
+                document.getElementById("loading").style.display = "none";
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById("loading").style.display = "none";
+            });
+        });
+    </script>
+</body>
+</html>
+
+
