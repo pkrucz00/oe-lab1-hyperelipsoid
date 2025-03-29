@@ -54,51 +54,56 @@ class BestSelection(SelectionOperator):
 # --- KRZYŻOWANIE ---
 
 class CrossoverOperator(ABC):
-    @abstractmethod
+
     def crossover(self, parent1: Individual, parent2: Individual):
         """
         Krzyżuje dwóch rodziców i zwraca parę potomków.
         """
+        (x_gene_1, y_gene_1), (x_gene_2, y_gene_2) = parent1.get_genes(), parent2.get_genes()
+        (new_gene_x_1, new_gene_y_1), (new_gene_x_2, new_gene_y_2) = self.gene_crossover(x_gene_1, x_gene_2), self.gene_crossover(y_gene_1, y_gene_2)
+        
+        individual1 = Individual(Chromosome(new_gene_x_1), Chromosome(new_gene_y_1))
+        individual2 = Individual(Chromosome(new_gene_x_2), Chromosome(new_gene_y_2))
+        return individual1, individual2
+        
+    @abstractmethod
+    def gene_crossover(self, gene1: str, gene2: str) -> tuple[str, str]:
+        '''
+        Krzyżuje dwa geny i zwraca parę genów potomnych
+        '''
         pass
 
 class OnePointCrossover(CrossoverOperator):
-    def crossover(self, parent1: Individual, parent2: Individual):
-        gene1 = parent1.chromosome.gene
-        gene2 = parent2.chromosome.gene
+    def gene_crossover(self, gene1: str, gene2: str) -> tuple[str, str]:
         if len(gene1) != len(gene2):
             raise ValueError("Chromosomy muszą mieć taką samą długość.")
         point = random.randint(1, len(gene1) - 1)
         child_gene1 = gene1[:point] + gene2[point:]
         child_gene2 = gene2[:point] + gene1[point:]
-        return Individual(Chromosome(child_gene1)), Individual(Chromosome(child_gene2))
+        return child_gene1, child_gene2
 
 class TwoPointCrossover(CrossoverOperator):
-    def crossover(self, parent1: Individual, parent2: Individual):
-        gene1 = parent1.chromosome.gene
-        gene2 = parent2.chromosome.gene
+    def gene_crossover(self, gene1: str, gene2: str) -> tuple[str, str]:
         if len(gene1) != len(gene2):
             raise ValueError("Chromosomy muszą mieć taką samą długość.")
         if len(gene1) < 2:
-            return OnePointCrossover().crossover(parent1, parent2)
+            return OnePointCrossover().crossover(gene1, gene2)
+        
         point1, point2 = sorted(random.sample(range(1, len(gene1)), 2))
         child_gene1 = gene1[:point1] + gene2[point1:point2] + gene1[point2:]
         child_gene2 = gene2[:point1] + gene1[point1:point2] + gene2[point2:]
-        return Individual(Chromosome(child_gene1)), Individual(Chromosome(child_gene2))
+        return child_gene1, child_gene2
 
 class UniformCrossover(CrossoverOperator):
-    def crossover(self, parent1: Individual, parent2: Individual):
-        gene1 = parent1.chromosome.gene
-        gene2 = parent2.chromosome.gene
+    def gene_crossover(self, gene1: str, gene2: str) -> tuple[str, str]:
         if len(gene1) != len(gene2):
             raise ValueError("Chromosomy muszą mieć taką samą długość.")
         child_gene1 = ''.join(g1 if random.random() < 0.5 else g2 for g1, g2 in zip(gene1, gene2))
         child_gene2 = ''.join(g2 if random.random() < 0.5 else g1 for g1, g2 in zip(gene1, gene2))
-        return Individual(Chromosome(child_gene1)), Individual(Chromosome(child_gene2))
+        return child_gene1, child_gene2
 
 class GrainCrossover(CrossoverOperator):
-    def crossover(self, parent1: Individual, parent2: Individual):
-        gene1 = parent1.chromosome.gene
-        gene2 = parent2.chromosome.gene
+    def gene_crossover(self, gene1: str, gene2: str):
         if len(gene1) != len(gene2):
             raise ValueError("Chromosomy muszą mieć taką samą długość.")
         
@@ -116,76 +121,85 @@ class GrainCrossover(CrossoverOperator):
             else:
                 child_gene2 += gene2[i]
                 
-        return Individual(Chromosome(child_gene1)), Individual(Chromosome(child_gene2))
+        return child_gene1, child_gene2
 
 
 # --- MUTACJA ---
 
 class MutationOperator(ABC):
-    @abstractmethod
     def mutate(self, individual: Individual, mutation_probability: float):
         """
         Mutuje danego osobnika z podanym prawdopodobieństwem.
         """
+        if random.random() > mutation_probability:
+            return individual
+        
+        x_gene, y_gene = individual.get_genes()
+        new_gene_x, new_gene_y = self.mutate_gene(x_gene), self.mutate_gene(y_gene)
+        
+        return Individual(Chromosome(new_gene_x), Chromosome(new_gene_y))
+    
+    @abstractmethod
+    def mutate_gene(self, gene: str) -> str:
         pass
 
 class OnePointMutation(MutationOperator):
-    def mutate(self, individual: Individual, mutation_probability: float):
+    def mutate_gene(self, gene: str)-> str:
         # Losujemy, czy mutacja ma zajść – jeśli nie, zwracamy osobnika bez zmian
-        if random.random() < mutation_probability:
-            gene = list(individual.chromosome.gene)
-            # Wybieramy losowy indeks w chromosomie
-            index = random.randint(0, len(gene) - 1)
-            gene[index] = '1' if gene[index] == '0' else '0'
-            mutated_gene = ''.join(gene)
-            return Individual(Chromosome(mutated_gene))
-        else:
-            return individual
+        
+        gene = list(gene)
+        # Wybieramy losowy indeks w chromosomie
+        index = random.randint(0, len(gene) - 1)
+        gene[index] = '1' if gene[index] == '0' else '0'
+        return ''.join(gene)
 
 
 class BoundaryMutation(MutationOperator):
-    def mutate(self, individual: Individual, mutation_probability: float):
-        gene = list(individual.chromosome.gene)
-        if random.random() < mutation_probability:
-            # Losowo wybieramy, czy zmodyfikować pierwszy czy ostatni bit
-            if random.random() < 0.5:
-                # Mutacja pierwszego bitu
-                gene[0] = '1' if gene[0] == '0' else '0'
-            else:
-                # Mutacja ostatniego bitu
-                gene[-1] = '1' if gene[-1] == '0' else '0'
-        mutated_gene = ''.join(gene)
-        return Individual(Chromosome(mutated_gene))
+    def mutate_gene(self, gene: str) -> str:
+        gene = list(gene)
+        # Losowo wybieramy, czy zmodyfikować pierwszy czy ostatni bit
+        if random.random() < 0.5:
+            # Mutacja pierwszego bitu
+            gene[0] = '1' if gene[0] == '0' else '0'
+        else:
+            # Mutacja ostatniego bitu
+            gene[-1] = '1' if gene[-1] == '0' else '0'
+        return ''.join(gene)
 
 class TwoPointMutation(MutationOperator):
-    def mutate(self, individual: Individual, mutation_probability: float):
-        gene = list(individual.chromosome.gene)
+    def mutate_gene(self, gene: str) -> str:
+        gene = list(gene)
         if len(gene) < 2:
-            return individual
-        if random.random() < mutation_probability:
-            i, j = random.sample(range(len(gene)), 2)
-            gene[i] = '1' if gene[i] == '0' else '0'
-            gene[j] = '1' if gene[j] == '0' else '0'
-        mutated_gene = ''.join(gene)
-        return Individual(Chromosome(mutated_gene))
+            return gene
+        i, j = random.sample(range(len(gene)), 2)
+        gene[i] = '1' if gene[i] == '0' else '0'
+        gene[j] = '1' if gene[j] == '0' else '0'
+        return ''.join(gene)
 
 
 # --- INWERSJA ---
 
 class InversionOperator(ABC):
-    @abstractmethod
     def invert(self, individual: Individual, inversion_probability: float) -> Individual:
         """
         Stosuje inwersję na chromosomie osobnika z zadanym prawdopodobieństwem.
         """
+        if random.random() > inversion_probability:
+            return individual
+        
+        x_gene, y_gene = individual.get_genes()
+        new_gene_x, new_gene_y = self.invert_gene(x_gene), self.invert_gene(y_gene)
+        
+        return Individual(Chromosome(new_gene_x), Chromosome(new_gene_y))
+        
+    @abstractmethod
+    def invert_gene(self, gene: str) -> str:
         pass
 
 class SimpleInversion(InversionOperator):
-    def invert(self, individual: Individual, inversion_probability: float) -> Individual:
-        gene = list(individual.chromosome.gene)
-        if random.random() < inversion_probability:
+    def invert_gene(self, gene: str) -> str:
+        gene = list(gene)
             # Wybieramy dwa losowe indeksy i odwracamy fragment między nimi
-            i, j = sorted(random.sample(range(len(gene)), 2))
-            gene[i:j+1] = reversed(gene[i:j+1])
-        inverted_gene = ''.join(gene)
-        return Individual(Chromosome(inverted_gene))
+        i, j = sorted(random.sample(range(len(gene)), 2))
+        gene[i:j+1] = reversed(gene[i:j+1])
+        return ''.join(gene)
