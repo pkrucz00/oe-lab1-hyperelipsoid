@@ -1,3 +1,5 @@
+from collections.abc import Iterable
+
 class HyperellipsoidFitness:
     def __init__(self, num_vars, search_range):
         self.num_vars = num_vars
@@ -9,7 +11,7 @@ class HyperellipsoidFitness:
         value = 0
         # Jeśli phenotype jest pojedynczą wartością, używamy jej kwadratu
         # Dla wielowymiarowego problemu phenotype może być listą wartości
-        if isinstance(phenotype, list):
+        if isinstance(phenotype, Iterable):
             for i in range(len(phenotype)):
                 for j in range(i+1):
                     value += phenotype[j] ** 2

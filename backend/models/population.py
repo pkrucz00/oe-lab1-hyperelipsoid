@@ -19,7 +19,7 @@ class Population:
         :param chromosome_length: długość chromosomu
         """
         self.individuals = [
-            Individual(Chromosome.random(chromosome_length))
+            Individual(Chromosome.random(chromosome_length), Chromosome.random(chromosome_length))
             for _ in range(self.population_size)
         ]
 

@@ -16,12 +16,12 @@ def test_selection():
     print("----- Test operatorów selekcji -----")
     # Tworzymy przykładową populację – minimalna klasa kontenera
     individuals = [
-        Individual(Chromosome("101010")),
-        Individual(Chromosome("010101")),
-        Individual(Chromosome("111000")),
-        Individual(Chromosome("000111")),
-        Individual(Chromosome("110011")),
-        Individual(Chromosome("111111"))
+        Individual(Chromosome("101010"), Chromosome("101010")),
+        Individual(Chromosome("010101"), Chromosome("010101")),
+        Individual(Chromosome("111000"), Chromosome("111000")),
+        Individual(Chromosome("000111"), Chromosome("000111")),
+        Individual(Chromosome("110011"), Chromosome("110011")),
+        Individual(Chromosome("111111"), Chromosome("111111"))
     ]
     # Ustawiamy fitness – korzystamy z dekodowania jako wartości fitness
     for ind in individuals:
