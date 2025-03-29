@@ -10,6 +10,13 @@ class Individual:
         self.chromoseme_y = chromosome_y
         self.fitness = None  # wartość funkcji celu, ustalana później
 
+    def get_genes(self) -> (str, str):
+        """
+        Zwraca genotyp chromosomu.
+        :return: genotyp chromosomu
+        """
+        return self.chromosome_x.gene, self.chromoseme_y.gene
+    
     def get_phenotype(self, a: float, b: float) -> float:
         """
         Zwraca zdekodowaną wartość (fenotyp) chromosomu.
