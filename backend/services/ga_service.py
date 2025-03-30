@@ -1,6 +1,5 @@
 import time
 import math
-import random
 from backend.models.population import Population
 from backend.services.operators import *
 
@@ -20,7 +19,6 @@ def run_ga(config: dict) -> dict:
     epochs = config.get("epochs", 50)
     search_range = config.get("search_range", [-65.536, 65.536])
     precision = config.get("precision", 6)
-    optimization_type = config.get("optimization_type", "minimization")
     
     # Parametry operatorów
     tournament_size = config.get("tournament_size", 3)
@@ -121,9 +119,9 @@ def run_ga(config: dict) -> dict:
             elitism_count=elitism_count
         )
         best_individual = population.get_best(1)[0]
-        best_x = best_individual.get_phenotype(search_range[0], search_range[1])
+        (best_x, best_y) = best_individual.get_phenotype(search_range[0], search_range[1])
         best_fitness = best_individual.fitness
-        history.append({"x": best_x, "fitness": best_fitness})
+        history.append({"x": best_x, "y": best_y, "fitness": best_fitness})
 
     elapsed_time = time.time() - start_time
     best_individual = population.get_best(1)[0]
