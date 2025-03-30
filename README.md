@@ -40,10 +40,12 @@ Projekt oparty na Flask, który implementuje algorytm genetyczny do optymalizacj
 2. Aplikacja będzie dostępna pod adresem:  
    `http://127.0.0.1:5000`
 
+   Powinna wyświetlić GUI aplikacji składający się z formularza.
+
 ## Testowanie API
 
 - **Endpoint:**  
-  `POST http://127.0.0.1:5000/api/ga/run`
+  `POST http://127.0.0.1:5000/run`
 
 - **Przykładowy JSON do wysłania (np. w Postmanie):**
 
@@ -83,6 +85,9 @@ backend/
  ├── controllers/          # Endpointy (np. ga_controller.py)
  ├── models/               # Modele: Chromosome, Individual, Population, FitnessFunction
  └── services/             # Logika algorytmu genetycznego (ga_service.py) i operatorzy (operators.py)
+frontend/
+ ├── stronka.html          # HTML zawierający GUI strony 
+ ├── style.css             # style GUI
 ```
 
 ## Uwagi
