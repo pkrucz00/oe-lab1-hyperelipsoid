@@ -3,94 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formularz JSON</title>
-   <link rel="stylesheet" href="style.css">
+    <title>Hyperllipsoid</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        form {
+            margin-bottom: 50px;
+            width: 80vw;
+            margin-top: 130px;
+            height: 120vh;
+            background: #1e1e1e;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        h2 {
+            font-size: 36px;
+            font-style: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #bb86fc;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        label {
+            display: center;
+            margin-bottom: 5px;
+            font-size: 16px;
+            width: 100vh;
+            font-size: 14px;
+            color: #ccc;
+        }
+        input, select, button {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background: #2a2a2a;
+            color: #ffffff;
+            width: 100%;
+        }
+        .loading {
+            display: none;
+            font-size: 16px;
+            color: #bb86fc;
+            text-align: center;
+        }
+        .button-85 {
+            padding: 0.6em 2em;
+            width: 150px;
+            justify-content: center;
+            border: none;
+            outline: none;
+            color: rgb(255, 255, 255);
+            background: #111;
+            cursor: pointer;
+            position: relative;
+            z-index: 0;
+            border-radius: 10px;
+            user-select: none;
+            touch-action: manipulation;
+        }
+        #resultFrom {
+            display: none; 
+            width: 80vw;
+            margin-top: 230px; 
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-radius: 8px;
+            background: #333;
+            color: #fff;
+        }
+        .result-item h3 {
+            color: #bb86fc;
+            margin: 0;
+        }
+        span {
+            font-weight: bold;
+            font-size: 20px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        select {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #2a2a2a;
+            border: 1px solid #444;
+            padding: 10px;
+            border-radius: 5px;
+            width: 102vh;
+        }
+
+            option {
+                font-family: 'Courier New', Courier, monospace;
+                font-size: 18px;
+                font-weight: bold;
+                color: #ffffff; 
+                background-color: #333; /
+            }
+
+        .result-item:nth-child(even) {
+            background: #444;
+        }
+    </style>
 </head>
 <body>
+
     <form id="dataForm">
-        <h2>Wypełnij formularz</h2>
-        <label>Funkcja:
-            <!-- <input type="text" id="function" required> -->
-             <select id="optimization_type">
-                <option value="minimization">Hyperllipsoid</option>
-            </select>
-        </label>
-        <label>Liczba zmiennych:
-            <input type="number" id="variables" required>
-        </label>
-        <label>Rozmiar populacji:
+        <h2>Fill out the form</h2>
+        <label><span>Population size:</span>
             <input type="number" id="population_size" required>
         </label>
-        <label>Epoki:
+        <label><span>Epochs:</span>
             <input type="number" id="epochs" required>
         </label>
-        <label>Zakres wyszukiwania:
+        <label><span>Search range:</span>
             <input type="text" id="search_range" required>
         </label>
-        <label>Precyzja:
+        <label><span>Precision:</span>
             <input type="number" id="precision" required>
         </label>
-        <label>Typ optymalizacji:
-            <select id="optimization_type">
-                <option value="minimization">Minimization</option>
-                <option value="maximization">Maximization</option>
-            </select>
-        </label>
-        <label>Rozmiar turnieju:
+        <label><span>Tournament size:</span>
             <input type="number" id="tournament_size" required>
         </label>
-        <label>Prawdopodobieństwo krzyżowania:
+        <label><span>Crossover probability:</span>
             <input type="number" step="0.01" id="crossover_probability" required>
         </label>
-        <label>Prawdopodobieństwo mutacji:
+        <label><span>Mutation probability:</span>
             <input type="number" step="0.01" id="mutation_probability" required>
         </label>
-        <label>Prawdopodobieństwo inwersji:
+        <label><span>Inversion probability:</span>
             <input type="number" step="0.01" id="inversion_probability" required>
         </label>
-        <label>Liczba elitarna:
+        <label><span>Elitism count:</span>
             <input type="number" id="elitism_count" required>
         </label>
-        <label>Metoda selekcji:
+        <label><span>Selection method:</span>
             <select id="selection_method">
                 <option value="tournament">Tournament</option>
-                <option value="roulette">Roulette</option>
+                <option value="roulette"><span>Roulette</span></option>
+                <option value="best"><span>Best</span></option>
             </select>
         </label>
-        <label>Metoda krzyżowania:
+        <label><span>Crossover method:</span>
             <select id="crossover_method">
-                <option value="one_point">One Point</option>
-                <option value="two_point">Two Point</option>
+                <option value="one_point"><span>One Point</span></option>
+                <option value="two_point"><span>Two Point</span></option>
+                <option value="uniform"><span>Uniform</span></option>
+                <option value="grain"><span>Grain</span></option>
             </select>
         </label>
-        <label>Metoda mutacji:
+        <label><span>Mutation method:</span>
             <select id="mutation_method">
-                <option value="one_point">One Point</option>
-                <option value="bit_flip">Bit Flip</option>
+                <option value="one_point"><span>One Point</span></option>
+                <option value="boundary"><span>Boundary</span></option>
+                <option value="two_point"><span>Two point</span></option>
             </select>
         </label>
-        <label>Metoda inwersji:
-            <select id="inversion_method">
-                <option value="simple">Simple</option>
-            </select>
-        </label>
-        <button class="button-85" role="button" type="submit">Wyślij</button>
-        <p class="loading" id="loading">Ładowanie wykresu...</p>
+        <button class="button-85" role="button" type="submit"><span>Submit</span></button>
+        <p class="loading" id="loading">Loading...</p>
     </form>
+
+    <div id="resultFrom">
+        <h2>Results</h2>
+        <div class="result-item">
+            <h3>Best Fitness:</h3>
+            <span id="fitness"></span>
+        </div>
+        <div class="result-item">
+            <h3>Best Individual:</h3>
+            <span id="individuals"></span>
+        </div>
+        <div class="result-item">
+            <h3>Execution Time:</h3>
+            <span id="execution-time"></span>
+        </div>
+    </div>
+
     <script>
         document.getElementById("dataForm").addEventListener("submit", function(event) {
             event.preventDefault();
-            
             document.getElementById("loading").style.display = "block";
+            document.getElementById("resultFrom").style.display = "none"; // Ukrywamy sekcję wyników przed wysłaniem danych
             
             const formData = {
-                function: document.getElementById("function").value,
-                variables: parseInt(document.getElementById("variables").value),
+                function: "hyperellipsoid",
+                variables: 10,
                 population_size: parseInt(document.getElementById("population_size").value),
                 epochs: parseInt(document.getElementById("epochs").value),
                 search_range: document.getElementById("search_range").value.split(",").map(Number),
                 precision: parseInt(document.getElementById("precision").value),
-                optimization_type: document.getElementById("optimization_type").value,
+                optimization_type: "minimization",
                 tournament_size: parseInt(document.getElementById("tournament_size").value),
                 crossover_probability: parseFloat(document.getElementById("crossover_probability").value),
                 mutation_probability: parseFloat(document.getElementById("mutation_probability").value),
@@ -99,20 +220,21 @@
                 selection_method: document.getElementById("selection_method").value,
                 crossover_method: document.getElementById("crossover_method").value,
                 mutation_method: document.getElementById("mutation_method").value,
-                inversion_method: document.getElementById("inversion_method").value
+                inversion_method: "simple"
             };
 
-            fetch("/api/ga/run", {
+            fetch("/run", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData)
             })
             .then(response => response.json())
             .then(data => {
-                console.log("Success:", data);
                 document.getElementById("loading").style.display = "none";
+                document.getElementById("resultFrom").style.display = "block"; // Pokazujemy sekcję wyników po otrzymaniu danych
+                document.getElementById("fitness").innerHTML = data.best_fitness;
+                document.getElementById("individuals").innerHTML = data.best_individual;
+                document.getElementById("execution-time").innerHTML = `${data.time.toFixed(4)} sekundy`;
             })
             .catch(error => {
                 console.error("Error:", error);
@@ -120,7 +242,6 @@
             });
         });
     </script>
+
 </body>
 </html>
-
-
