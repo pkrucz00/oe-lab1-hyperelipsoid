@@ -1,51 +1,51 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background-color: #121212;
-    color: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background-color: #121212;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 form {
-    width: 75vw;
-    height: 75vh;
-    background: #1e1e1e;
-    border-radius: 12px;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+  display: flex;
+  width: 80vw;
+  height: 70vh;
+  background: #1e1e1e;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
 }
 h2 {
-    grid-column: span 2;
-    text-align: center;
+  grid-column: span 2;
+  text-align: center;
+  color: #bb86fc;
 }
 label {
-    display: flex;
-    flex-direction: column;
-    font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  color: #ccc;
 }
 input, select, button {
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #444;
-    background: #2a2a2a;
-    color: #ffffff;
-    width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #444;
+  background: #2a2a2a;
+  color: #ffffff;
+  width: 100%;
 }
 .loading {
-    display: none;
-    font-size: 16px;
-    color: #bb86fc;
-    grid-column: span 2;
-    text-align: center;
+  display: none;
+  font-size: 16px;
+  color: #bb86fc;
+  grid-column: span 2;
+  text-align: center;
 }
-
-
-
 .button-85 {
   padding: 0.6em 2em;
   width: 150px;
@@ -114,3 +114,4 @@ input, select, button {
   top: 0;
   border-radius: 10px;
 }
+
