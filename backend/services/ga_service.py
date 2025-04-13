@@ -3,6 +3,8 @@ import math
 from backend.models.population import Population
 from backend.services.operators import *
 from typing import Literal
+from backend.models.fitness import HyperellipsoidFitness
+
 
 def calculate_chromosome_length(search_range, precision):
     a, b = search_range
@@ -47,10 +49,7 @@ def choose_mutation_method(mutation_method):
 def run_ga(representation: Literal['binary', 'real'], config: dict) -> dict:
     start_time = time.time()
 
-    
     # Odczyt parametrów z JSON
-    function_name = config.get("function", "hyperellipsoid")
-    num_vars = config.get("variables", 10)
     pop_size = config.get("population_size", 100)
     epochs = config.get("epochs", 50)
     search_range = config.get("search_range", [-65.536, 65.536])
@@ -60,30 +59,22 @@ def run_ga(representation: Literal['binary', 'real'], config: dict) -> dict:
     tournament_size = config.get("tournament_size", 3)
     crossover_probability = config.get("crossover_probability", 0.8)
     mutation_probability = config.get("mutation_probability", 0.3)
-    inversion_probability = config.get("inversion_probability", 0.3)
+    inversion_probability = 0. if representation == 'real' else config.get("inversion_probability", 0.3)
     elitism_count = config.get("elitism_count", 2)
     
     # Wyliczamy długość chromosomu dla jednej zmiennej
     chromosome_length = calculate_chromosome_length(search_range, precision)
     
-    # Inicjalizacja funkcji celu – przykładowo Hyperellipsoid
-    if function_name.lower() == "hyperellipsoid":
-        from backend.models.fitness import HyperellipsoidFitness
-        fitness_function = HyperellipsoidFitness(num_vars=num_vars, search_range=search_range)
-    else:
-        # Domyślnie Hyperellipsoid
-        from backend.models.fitness import HyperellipsoidFitness
-        fitness_function = HyperellipsoidFitness(num_vars=num_vars, search_range=search_range)
+    fitness_function = HyperellipsoidFitness()
     
     # Inicjalizacja populacji
-    population = Population(pop_size)
-    population.initialize(chromosome_length)
+    ## TODO add chromosome type
+    population = Population(pop_size, chromosome_length)
     
     # Odczyt dodatkowych parametrów dotyczących metod operatorów
     selection_method = config.get("selection_method", "tournament")
     crossover_method = config.get("crossover_method", "one_point")
     mutation_method = config.get("mutation_method", "one_point")
-    inversion_method = config.get("inversion_method", "simple")
     
     selection_operator = choose_selection_method(selection_method, tournament_size, config.get("best_count", 3))
     crossover_operator = choose_crossover_method(crossover_method=crossover_method)
@@ -91,7 +82,7 @@ def run_ga(representation: Literal['binary', 'real'], config: dict) -> dict:
     inversion_operator = SimpleInversion() 
 
     history = []
-    for epoch in range(epochs):
+    for _epoch in range(epochs):
         population.evolve(
             fitness_function,
             selection_operator=selection_operator,

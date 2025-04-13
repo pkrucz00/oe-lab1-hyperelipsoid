@@ -5,23 +5,17 @@ from backend.models.chromosome import Chromosome
 from backend.services.operators import SelectionOperator, CrossoverOperator, MutationOperator, InversionOperator
 
 class Population:
-    def __init__(self, population_size: int):
+    def __init__(self, population_size: int, chromosome_length: int):
         """
         Inicjalizacja populacji osobników.
         :param population_size: liczba osobników w populacji
         """
         self.population_size = population_size
-        self.individuals = []
-
-    def initialize(self, chromosome_length: int) -> None:
-        """
-        Losowa inicjalizacja populacji. Każdy osobnik otrzymuje pojedynczy losowy chromosom o zadanej długości.
-        :param chromosome_length: długość chromosomu
-        """
         self.individuals = [
             Individual(Chromosome.random(chromosome_length), Chromosome.random(chromosome_length))
             for _ in range(self.population_size)
         ]
+
 
     def evaluate(self, fitness_function) -> None:
         """

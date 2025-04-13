@@ -4,21 +4,17 @@ from backend.services.io_service import persist_result
 
 ga_blueprint = Blueprint("ga", __name__)
 
-@ga_blueprint.route("/run", methods=["POST"])
-def run():
+@ga_blueprint.route("/run/:chromosome_type", methods=["POST"])
+def run(chromosome_type):
+    if (chromosome_type not in ['binary', 'real']):
+        return f"'{chromosome_type}' is not a valid chromosome type. Valid values: [binary, real].", 400
+    
     config = request.get_json()
-    result = run_ga('binary', config)
+    result = run_ga(representation=chromosome_type, config=config)
     persist_result(result)
 
     return jsonify(result)
 
-# @ga_blueprint.route("/run/real", methods=["POST"])
-# def run_real():
-#     config = request.get_json()
-#     result = run_ga(config)
-#     persist_result(result)
-
-#     return jsonify(result)
 
 @ga_blueprint.route("/", methods=["GET"])
 def index():

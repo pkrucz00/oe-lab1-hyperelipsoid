@@ -1,10 +1,9 @@
 from collections.abc import Iterable
 
 class HyperellipsoidFitness:
-    def __init__(self, num_vars, search_range):
-        self.num_vars = num_vars
-        self.search_range = search_range
-
+    def __init__(self):
+        pass
+    
     def evaluate(self, phenotype):
         # Przyjmujemy, że phenotype to pojedyncza wartość – w praktyce możesz rozszerzyć na wielowymiarowość
         # Poniższa implementacja jest przykładowa

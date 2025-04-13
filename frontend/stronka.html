@@ -238,7 +238,6 @@
             
             const radios = document.querySelectorAll('input[name="chromosome_type"]');
             const visibleOnlyForBinary = Array.from(document.getElementsByClassName('onlyBinary'));
-            console.log({visibleOnlyForBinary});
             
             const crossoverSelect = document.getElementById("crossover_method");
             const mutationSelect = document.getElementById("mutation_method");
@@ -302,6 +301,8 @@
             radios.forEach(radio => {
                 radio.addEventListener('change', handleRadioChange);
             });
+            updateOptions(chromosome_type);
+
         });
 
         document.getElementById("dataForm").addEventListener("submit", function(event) {

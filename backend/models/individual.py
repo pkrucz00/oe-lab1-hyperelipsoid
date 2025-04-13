@@ -10,7 +10,7 @@ class Individual:
         self.chromoseme_y = chromosome_y
         self.fitness = None  # wartość funkcji celu, ustalana później
 
-    def get_genes(self) -> (str, str):
+    def get_genes(self) -> tuple[str, str]:
         """
         Zwraca genotyp chromosomu.
         :return: genotyp chromosomu

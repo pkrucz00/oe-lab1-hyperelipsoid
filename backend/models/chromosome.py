@@ -38,3 +38,7 @@ class Chromosome:
 
     def __str__(self):
         return f"Chromosome(gene='{self.gene}')"
+    
+
+def BinaryChromosome(Chromosome):
+    pass
