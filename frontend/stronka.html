@@ -123,12 +123,51 @@
         .result-item:nth-child(even) {
             background: #444;
         }
+
+        .radio-container {
+            padding: 10px;
+            border: 1px solid #ccc; /* Light grey border for the fieldset */
+            width: 300px; /* Adjust as necessary */
+        }
+
+        .radio-container legend {
+            padding: 0 5px; /* Padding inside the legend */
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .radio-container label {
+            display: block; /* Each label on a new line */
+            margin: 5px 0; /* Space between each label */
+        }
+
+        .radio-container input[type="radio"] {
+            margin-right: 10px; /* Space between radio button and label text */
+            width: auto;
+        }
+
+        .hidden {
+            display: none
+        }
     </style>
 </head>
 <body>
 
     <form id="dataForm">
         <h2>Fill out the form</h2>
+
+        <fieldset class="radio-container">
+            <legend>Select the chromosome representation</legend>
+            <label>
+                <input type="radio" id="binary_chromosome" name="chromosome_type" value="binary" checked>
+                <span>Binary</span>
+            </label>
+            <label>
+                <input type="radio" id="real_chromosome" name="chromosome_type" value="real">
+                <span>Real (floating point)</span>
+            </label>
+        </fieldset>
+
         <label><span>Population size:</span>
             <input type="number" id="population_size" required>
         </label>
@@ -138,7 +177,7 @@
         <label><span>Search range:</span>
             <input type="text" id="search_range" required>
         </label>
-        <label><span>Precision:</span>
+        <label class="onlyBinary"><span>Precision:</span>
             <input type="number" id="precision" required>
         </label>
         <label><span>Tournament size:</span>
@@ -150,7 +189,7 @@
         <label><span>Mutation probability:</span>
             <input type="number" step="0.01" id="mutation_probability" required>
         </label>
-        <label><span>Inversion probability:</span>
+        <label class="onlyBinary"><span>Inversion probability:</span>
             <input type="number" step="0.01" id="inversion_probability" required>
         </label>
         <label><span>Elitism count:</span>
@@ -165,17 +204,12 @@
         </label>
         <label><span>Crossover method:</span>
             <select id="crossover_method">
-                <option value="one_point"><span>One Point</span></option>
-                <option value="two_point"><span>Two Point</span></option>
-                <option value="uniform"><span>Uniform</span></option>
-                <option value="grain"><span>Grain</span></option>
+                <!-- Filled by JS -->
             </select>
         </label>
         <label><span>Mutation method:</span>
             <select id="mutation_method">
-                <option value="one_point"><span>One Point</span></option>
-                <option value="boundary"><span>Boundary</span></option>
-                <option value="two_point"><span>Two point</span></option>
+                <!-- Filled by JS -->
             </select>
         </label>
         <button class="button-85" role="button" type="submit"><span>Submit</span></button>
@@ -199,12 +233,84 @@
     </div>
 
     <script>
+        var chromosome_type = document.querySelector('input[name="chromosome_type"]:checked').value;
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const radios = document.querySelectorAll('input[name="chromosome_type"]');
+            const visibleOnlyForBinary = Array.from(document.getElementsByClassName('onlyBinary'));
+            console.log({visibleOnlyForBinary});
+            
+            const crossoverSelect = document.getElementById("crossover_method");
+            const mutationSelect = document.getElementById("mutation_method");
+
+            const optionsBinary = {
+                crossover: [
+                    { value: 'one_point', text: 'One Point' },
+                    { value: 'two_point', text: 'Two Point' },
+                    { value: 'uniform', text: 'Uniform' },
+                    { value: 'grain', text: 'Grain' }
+                ],
+                mutation: [
+                    { value: 'one_point', text: 'One Point' },
+                    { value: 'two_point', text: 'Two Point' },
+                    { value: 'boundary', text: 'Boundary' }
+                ]
+            }
+
+            const optionsReal = {
+                crossover: [
+                    { value: 'arithmetic', text: 'Arithmetic'},
+                    { value: 'linear', text: 'Linear'},
+                    { value: 'mixed_alpha', text: 'Mixed type alpha'},
+                    { value: 'mixed_alpha_beta', text: 'Mixed type alpha beta'},
+                    { value: 'average', text: 'Average'}
+                ],
+                mutation: [
+                    { value: 'uniform', text: 'Uniform' },
+                    { value: 'gauss', text: 'Gauss'}
+                ]
+            }
+
+            const updateSelect = (selectElement, options) => {
+                selectElement.innerHTML = '';
+                options.forEach(option => {
+                    const opt = document.createElement('option');
+                    opt.value = option.value;
+                    opt.textContent = option.text;
+                    selectElement.appendChild(opt);
+                });
+            };
+
+            const updateOptions = (type) => {
+                const hideOnlyBinary = type === 'real';
+                if (hideOnlyBinary) {
+                    visibleOnlyForBinary.forEach((elem) => {elem.classList.add("hidden")});
+                } else {
+                    visibleOnlyForBinary.forEach((elem) => {elem.classList.remove("hidden")});
+                }
+                
+                const { crossover, mutation } = type === 'binary' ? optionsBinary : optionsReal;
+                updateSelect(crossoverSelect, crossover);
+                updateSelect(mutationSelect, mutation);
+            }
+
+            function handleRadioChange(event) {
+                chromosome_type = event.target.value;
+                updateOptions(chromosome_type);
+            }
+
+            radios.forEach(radio => {
+                radio.addEventListener('change', handleRadioChange);
+            });
+        });
+
         document.getElementById("dataForm").addEventListener("submit", function(event) {
             event.preventDefault();
             document.getElementById("loading").style.display = "block";
             document.getElementById("resultFrom").style.display = "none"; // Ukrywamy sekcję wyników przed wysłaniem danych
             
             const formData = {
+                chromosome_representation: chromosome_type,
                 function: "hyperellipsoid",
                 variables: 10,
                 population_size: parseInt(document.getElementById("population_size").value),

@@ -7,10 +7,18 @@ ga_blueprint = Blueprint("ga", __name__)
 @ga_blueprint.route("/run", methods=["POST"])
 def run():
     config = request.get_json()
-    result = run_ga(config)
+    result = run_ga('binary', config)
     persist_result(result)
 
     return jsonify(result)
+
+# @ga_blueprint.route("/run/real", methods=["POST"])
+# def run_real():
+#     config = request.get_json()
+#     result = run_ga(config)
+#     persist_result(result)
+
+#     return jsonify(result)
 
 @ga_blueprint.route("/", methods=["GET"])
 def index():

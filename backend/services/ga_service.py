@@ -2,6 +2,7 @@ import time
 import math
 from backend.models.population import Population
 from backend.services.operators import *
+from typing import Literal
 
 def calculate_chromosome_length(search_range, precision):
     a, b = search_range
@@ -9,8 +10,43 @@ def calculate_chromosome_length(search_range, precision):
     m = math.ceil(math.log2((b - a) * (10 ** precision) + 1))
     return m
 
-def run_ga(config: dict) -> dict:
+def choose_selection_method(selection_method, tournament_size, best_count):
+    if selection_method.lower() == "tournament":
+        return TournamentSelection(tournament_size=tournament_size)
+    elif selection_method.lower() == "roulette":
+        return RouletteSelection()
+    elif selection_method.lower() == "best":
+        return BestSelection(count=best_count)
+    else:
+        # Domyślnie Tournament
+        return TournamentSelection(tournament_size=tournament_size)
+
+def choose_crossover_method(crossover_method):
+    if crossover_method.lower() == "one_point":
+        return OnePointCrossover()
+    elif crossover_method.lower() == "two_point":
+        return  TwoPointCrossover()
+    elif crossover_method.lower() == "uniform":
+        return  UniformCrossover()
+    elif crossover_method.lower() == "grain":
+        return GrainCrossover()
+    else:
+        return OnePointCrossover()
+
+def choose_mutation_method(mutation_method):
+    if mutation_method.lower() == "one_point":
+        return OnePointMutation()
+    elif mutation_method.lower() == "boundary":
+        return BoundaryMutation()
+    elif mutation_method.lower() == "two_point":
+        return TwoPointMutation()
+    else:
+        return OnePointMutation()
+    
+
+def run_ga(representation: Literal['binary', 'real'], config: dict) -> dict:
     start_time = time.time()
+
     
     # Odczyt parametrów z JSON
     function_name = config.get("function", "hyperellipsoid")
@@ -49,61 +85,10 @@ def run_ga(config: dict) -> dict:
     mutation_method = config.get("mutation_method", "one_point")
     inversion_method = config.get("inversion_method", "simple")
     
-    # Inicjalizacja operatora selekcji
-    if selection_method.lower() == "tournament":
-        
-        selection_operator = TournamentSelection(tournament_size=tournament_size)
-    elif selection_method.lower() == "roulette":
-
-        selection_operator = RouletteSelection()
-    elif selection_method.lower() == "best":
-
-        best_count = config.get("best_count", 3)
-        selection_operator = BestSelection(count=best_count)
-    else:
-        # Domyślnie Tournament
-
-        selection_operator = TournamentSelection(tournament_size=tournament_size)
-    
-    # Inicjalizacja operatora krzyżowania
-    if crossover_method.lower() == "one_point":
-
-        crossover_operator = OnePointCrossover()
-    elif crossover_method.lower() == "two_point":
-
-        crossover_operator = TwoPointCrossover()
-    elif crossover_method.lower() == "uniform":
-
-        crossover_operator = UniformCrossover()
-    elif crossover_method.lower() == "grain":
-
-        crossover_operator = GrainCrossover()
-    else:
-
-        crossover_operator = OnePointCrossover()
-    
-    # Inicjalizacja operatora mutacji
-    if mutation_method.lower() == "one_point":
-
-        mutation_operator = OnePointMutation()
-    elif mutation_method.lower() == "boundary":
-
-        mutation_operator = BoundaryMutation()
-    elif mutation_method.lower() == "two_point":
-
-        mutation_operator = TwoPointMutation()
-    else:
-
-        mutation_operator = OnePointMutation()
-    
-    # Inicjalizacja operatora inwersji
-    if inversion_method.lower() == "simple":
-
-        inversion_operator = SimpleInversion()
-    else:
-
-        inversion_operator = SimpleInversion()
-
+    selection_operator = choose_selection_method(selection_method, tournament_size, config.get("best_count", 3))
+    crossover_operator = choose_crossover_method(crossover_method=crossover_method)
+    mutation_operator = choose_mutation_method(mutation_method)
+    inversion_operator = SimpleInversion() 
 
     history = []
     for epoch in range(epochs):
