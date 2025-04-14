@@ -1,8 +1,20 @@
 import random
 import math
 
-class Chromosome:
-    def __init__(self, gene: str):
+from abc import ABC, abstractmethod
+from typing import Literal
+
+def calculate_chromosome_length(search_range, precision):
+    a, b = search_range
+    # Obliczamy minimalną liczbę bitów m tak, aby pokryć zakres z daną precyzją
+    m = math.ceil(math.log2((b - a) * (10 ** precision) + 1))
+    return m
+
+def get_chromosome_init(chromosome_type: Literal['binary', 'real'], search_range: tuple[float, float], precision: int):
+    return lambda search_range: BinaryChromosome
+
+class Chromosome(ABC):
+    def __init__(self, search_range: tuple[float, float], precision: int):
         """
         Inicjalizacja chromosomu zadaną reprezentacją binarną.
         :param gene: ciąg znaków '0' i '1'
@@ -10,12 +22,14 @@ class Chromosome:
         self.gene = gene
 
     @staticmethod
-    def random(length: int) -> "Chromosome":
+    def random(a: int, b: int) -> "Chromosome":
         """
         Generuje losowy chromosom o podanej długości.
-        :param length: długość chromosomu
+        :param a: dolny zakres
+        :param b: górny zakres
         :return: instancja Chromosome
         """
+        length = calculate_chromosome_length((a, b))
         gene = ''.join(random.choice('01') for _ in range(length))
         return Chromosome(gene)
 
@@ -41,4 +55,7 @@ class Chromosome:
     
 
 def BinaryChromosome(Chromosome):
+    pass
+
+def RealChromosome(Chromosome):
     pass

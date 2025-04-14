@@ -6,11 +6,7 @@ from typing import Literal
 from backend.models.fitness import HyperellipsoidFitness
 
 
-def calculate_chromosome_length(search_range, precision):
-    a, b = search_range
-    # Obliczamy minimalną liczbę bitów m tak, aby pokryć zakres z daną precyzją
-    m = math.ceil(math.log2((b - a) * (10 ** precision) + 1))
-    return m
+
 
 def choose_selection_method(selection_method, tournament_size, best_count):
     if selection_method.lower() == "tournament":
@@ -63,13 +59,14 @@ def run_ga(representation: Literal['binary', 'real'], config: dict) -> dict:
     elitism_count = config.get("elitism_count", 2)
     
     # Wyliczamy długość chromosomu dla jednej zmiennej
-    chromosome_length = calculate_chromosome_length(search_range, precision)
-    
     fitness_function = HyperellipsoidFitness()
     
     # Inicjalizacja populacji
     ## TODO add chromosome type
-    population = Population(pop_size, chromosome_length)
+    chromosome_init = 
+    population = Population(pop_size=pop_size,
+                            search_range=search_range, 
+                            )
     
     # Odczyt dodatkowych parametrów dotyczących metod operatorów
     selection_method = config.get("selection_method", "tournament")

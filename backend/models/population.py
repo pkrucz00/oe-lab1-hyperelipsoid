@@ -3,16 +3,18 @@ from backend.models.individual import Individual
 from backend.models.chromosome import Chromosome
 # Importujemy interfejsy operatorów z modułu operators
 from backend.services.operators import SelectionOperator, CrossoverOperator, MutationOperator, InversionOperator
+from collections.abc import Callable
 
 class Population:
-    def __init__(self, population_size: int, chromosome_length: int):
+    def __init__(self, population_size: int, search_range: tuple[int, int], chromosome_init: Callable):
         """
         Inicjalizacja populacji osobników.
         :param population_size: liczba osobników w populacji
         """
         self.population_size = population_size
+        self.search_range = search_range
         self.individuals = [
-            Individual(Chromosome.random(chromosome_length), Chromosome.random(chromosome_length))
+            Individual(chromosome_init(search_range), chromosome_init(search_range))
             for _ in range(self.population_size)
         ]
 
@@ -23,7 +25,7 @@ class Population:
         :param fitness_function: instancja klasy FitnessFunction z metodą evaluate(phenotype)
         """
         for individual in self.individuals:
-            # Przyjmujemy stały zakres poszukiwań, np. [-65.536, 65.536]
+            
             phenotype = individual.get_phenotype(-65.536, 65.536)
             individual.fitness = fitness_function.evaluate(phenotype)
 

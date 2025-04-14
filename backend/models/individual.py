@@ -26,7 +26,3 @@ class Individual:
         """
         return (self.chromosome_x.decode(a, b), self.chromoseme_y.decode(a, b))
 
-    def __str__(self):
-        phenotype = self.get_phenotype(-65.536, 65.536)
-        return f"Individual(phenotype={phenotype}, fitness={self.fitness})"
-
